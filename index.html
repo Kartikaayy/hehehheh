@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Dearest Love</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Custom CSS for Heart Animation */
+        .heart {
+            position: fixed;
+            color: #ffc0cb;
+            text-shadow: 0 0 8px #ff69b4, 0 0 15px rgba(255, 105, 180, 0.5);
+            font-size: 1.5rem;
+            animation: floatHeart 15s infinite ease-in-out;
+            pointer-events: none;
+            opacity: 0;
+            z-index: 10;
+            will-change: transform, opacity;
+            backface-visibility: hidden;
+            transform: translateZ(0);
+        }
+
+        @keyframes floatHeart {
+            0% {
+                transform: translateY(0vh) translateX(0) scale(1) rotate(0deg) translateZ(0);
+                opacity: 0;
+            }
+
+            15% {
+                opacity: 0.8;
+            }
+
+            85% {
+                opacity: 0.6;
+            }
+
+            100% {
+                transform: translateY(-110vh) translateX(var(--float-x)) scale(1.2) rotate(var(--rotate-deg)) translateZ(0);
+                opacity: 0;
+            }
+        }
+
+        /* Enhanced glow animation for the main heading */
+        @keyframes enhancedGlow {
+
+            0%,
+            100% {
+                text-shadow: 0 0 15px rgba(255, 255, 255, 0.9),
+                    0 0 30px rgba(255, 192, 203, 0.6),
+                    0 0 45px rgba(255, 105, 180, 0.3);
+                transform: scale(1) translateZ(0);
+            }
+
+            50% {
+                text-shadow: 0 0 25px rgba(255, 255, 255, 1),
+                    0 0 50px rgba(255, 192, 203, 0.9),
+                    0 0 75px rgba(255, 105, 180, 0.5);
+                transform: scale(1.02) translateZ(0);
+            }
+        }
+
+        #main-message {
+            font-family: 'Great Vibes', cursive;
+            animation: enhancedGlow 6s infinite ease-in-out;
+            will-change: transform;
+            backface-visibility: hidden;
+        }
+
+        /* Custom style to integrate the uploaded background image with overlay */
+        #page-container {
+            background-image: url('background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-color: #ffe6f0;
+            position: relative;
+        }
+
+        #page-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%,
+                    rgba(255, 192, 203, 0.2) 0%,
+                    rgba(255, 105, 180, 0.3) 50%,
+                    rgba(139, 69, 139, 0.4) 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Cursive font for the hint text with pulse */
+        #hint-text {
+            font-family: 'Great Vibes', cursive;
+            animation: gentlePulse 3s infinite ease-in-out;
+            will-change: transform, opacity;
+            backface-visibility: hidden;
+        }
+
+        @keyframes gentlePulse {
+
+            0%,
+            100% {
+                opacity: 0.7;
+                transform: scale(1) translateZ(0);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.05) translateZ(0);
+            }
+        }
+
+        /* Sparkle particles */
+        .sparkle {
+            position: fixed;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 15;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+            animation: sparkleFloat 4s infinite ease-in-out;
+            opacity: 0;
+            will-change: transform, opacity;
+            backface-visibility: hidden;
+        }
+
+        @keyframes sparkleFloat {
+            0% {
+                transform: translateY(0) scale(0) translateZ(0);
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 0.9;
+                transform: translateY(-60px) scale(1.2) translateZ(0);
+            }
+
+            100% {
+                transform: translateY(-120px) scale(0) translateZ(0);
+                opacity: 0;
+            }
+        }
+
+        .content-card {
+            will-change: transform;
+            backface-visibility: hidden;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Removed hover effect on card to encourage tapping the hint/button */
+
+        .bounce-gift {
+            animation: smoothBounce 2s infinite ease-in-out;
+            will-change: transform;
+            backface-visibility: hidden;
+        }
+
+        @keyframes smoothBounce {
+
+            0%,
+            100% {
+                transform: translateY(0) translateZ(0);
+            }
+
+            50% {
+                transform: translateY(-15px) translateZ(0);
+            }
+        }
+
+        @keyframes popAndFade {
+            0% {
+                transform: translate(-50%, -50%) scale(1) translateZ(0);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translate(-50%, -50%) scale(2.5) translateZ(0);
+                opacity: 0;
+            }
+        }
+
+        /* New style for disabled button */
+        #continue-button:disabled {
+            background-color: #4c1130;
+            /* Darker pink/purple */
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+    </style>
+</head>
+
+<body id="page-container" class="h-screen w-screen overflow-hidden">
+    <audio id="backgroundAudio" loop>
+        <source src="audio.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <div class="flex items-center justify-center h-full w-full relative z-20 p-4 bg-black bg-opacity-20">
+        <div id="main-card"
+            class="content-card text-center text-white p-8 rounded-2xl backdrop-blur-md bg-gradient-to-br from-pink-900/30 via-purple-900/20 to-pink-800/30 max-w-2xl w-full border-2 border-pink-300/30 shadow-2xl">
+
+            <div class="text-6xl mb-4 bounce-gift">💝</div>
+
+            <h1 id="main-message"
+                class="text-5xl sm:text-7xl lg:text-8xl mb-6 font-extrabold tracking-tight text-pink-200">
+                My Dearest Love, Happy Birthday!
+            </h1>
+
+            <div class="flex items-center justify-center gap-3 my-6">
+                <span class="text-2xl">✨</span>
+                <div class="h-px w-24 bg-gradient-to-r from-transparent via-pink-300 to-transparent"></div>
+                <span class="text-3xl">💖</span>
+                <div class="h-px w-24 bg-gradient-to-r from-transparent via-pink-300 to-transparent"></div>
+                <span class="text-2xl">✨</span>
+            </div>
+
+            <p id="hint-text" class="text-2xl sm:text-3xl mt-8 mb-6 text-pink-100 italic cursor-pointer"
+                onclick="startAudio()">
+                Tap once to listen... 🎧
+            </p>
+
+            <button id="continue-button" onclick="navigateToNextPage(event)" disabled
+                class="w-full sm:w-1/2 p-3 text-xl font-bold rounded-xl shadow-lg bg-pink-500 hover:bg-pink-600 transition duration-300 transform hover:scale-105">
+                Continue to the Surprise!
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // --- Configuration ---
+        const HEART_COUNT = 25;
+        const HEART_CHARACTERS = ['❤️', '💖', '✨', '🌸', '💕', '🌺', '💗', '⭐'];
+        const SPARKLE_COUNT = 30;
+        const NEXT_PAGE_URL = 'main.html';
+        const audio = document.getElementById('backgroundAudio');
+        const hintText = document.getElementById('hint-text');
+        const continueButton = document.getElementById('continue-button');
+        let audioStarted = false;
+
+        audio.volume = 0.5; // Set volume
+
+        // --- Heart Animation Logic (unchanged) ---
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            const charIndex = Math.floor(Math.random() * HEART_CHARACTERS.length);
+            heart.innerHTML = HEART_CHARACTERS[charIndex];
+            const startX = Math.random() * 100;
+            heart.style.left = `${startX}vw`;
+            const driftX = (Math.random() - 0.5) * 40;
+            heart.style.setProperty('--float-x', `${driftX}vw`);
+            const rotation = Math.random() * 180;
+            heart.style.setProperty('--rotate-deg', `${rotation}deg`);
+            const delay = Math.random() * 15;
+            const duration = 12 + Math.random() * 6;
+            heart.style.animationDelay = `${delay}s`;
+            heart.style.animationDuration = `${duration}s`;
+            const size = 1.2 + Math.random() * 0.6;
+            heart.style.fontSize = `${size}rem`;
+            heart.style.bottom = `-10vh`;
+            document.body.appendChild(heart);
+        }
+
+        // --- Sparkle Animation Logic (unchanged) ---
+        function createSparkle() {
+            const sparkle = document.createElement('div');
+            sparkle.classList.add('sparkle');
+            sparkle.style.left = `${Math.random() * 100}vw`;
+            sparkle.style.top = `${Math.random() * 100}vh`;
+            sparkle.style.animationDelay = `${Math.random() * 4}s`;
+            sparkle.style.animationDuration = `${3 + Math.random() * 2}s`;
+            document.body.appendChild(sparkle);
+        }
+
+        // Generate hearts and sparkles
+        for (let i = 0; i < HEART_COUNT; i++) {
+            createHeart();
+        }
+
+        for (let i = 0; i < SPARKLE_COUNT; i++) {
+            createSparkle();
+        }
+
+        // --- Audio Start Logic (triggered by tapping the hint) ---
+        function startAudio() {
+            if (audioStarted) return;
+
+            audio.play().then(() => {
+                audioStarted = true;
+                hintText.innerHTML = 'Music playing! Now you can continue...';
+                hintText.classList.remove('cursor-pointer');
+                hintText.onclick = null; // Remove the click handler
+                continueButton.disabled = false; // Enable the continue button
+            }).catch(error => {
+                console.error("Audio playback failed (user interaction required):", error);
+                // Fallback if play() still fails (rare, but possible if sound is globally muted)
+                hintText.innerHTML = 'Music failed to play, but you can still continue!';
+                continueButton.disabled = false;
+                hintText.classList.remove('cursor-pointer');
+            });
+        }
+
+        // --- Navigation and Click Animation Logic (triggered by button) ---
+        function navigateToNextPage(e) {
+            // Use the button itself as the click target for the animation effect
+            const target = e.target;
+
+            // Prevent multiple clicks
+            if (document.body.dataset.navigating) return;
+            document.body.dataset.navigating = 'true';
+
+            // Add a temporary animation effect on click
+            const clickHeart = document.createElement('span');
+            clickHeart.innerHTML = '💖';
+            clickHeart.style.cssText = `
+                position: fixed;
+                font-size: 3rem;
+                color: #ff69b4;
+                pointer-events: none;
+                z-index: 1000;
+                top: ${e.clientY}px;
+                left: ${e.clientX}px;
+                transform: translate(-50%, -50%) scale(1) translateZ(0);
+                animation: popAndFade 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+                will-change: transform, opacity;
+                backface-visibility: hidden;
+            `;
+            document.body.appendChild(clickHeart);
+
+            // Redirect after animation
+            setTimeout(() => {
+                window.location.href = NEXT_PAGE_URL;
+            }, 400);
+        }
+    </script>
+</body>
+
+</html>
