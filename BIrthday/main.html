@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Birthday Treasure Hunt! 🗺️</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #fce7f3;
+            background-image: url('background.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        .game-card {
+            min-height: 80vh;
+            position: relative;
+            overflow: hidden;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #emoji-grid {
+            flex-grow: 1;
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            align-content: flex-start;
+            justify-content: space-around;
+            padding-top: 20px;
+            pointer-events: none;
+        }
+
+        .emoji-button {
+            font-size: 2.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 15px 10px;
+            transition: transform 0.1s ease-in-out;
+            pointer-events: auto;
+            filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.7));
+            flex-shrink: 0;
+            flex-basis: auto;
+        }
+
+        .emoji-button:hover {
+            transform: scale(1.2);
+            filter: drop-shadow(0 0 10px #ec4899);
+        }
+
+        #clue-display {
+            position: relative;
+            z-index: 30;
+        }
+    </style>
+</head>
+
+<body class="w-screen flex items-center justify-center p-4">
+
+    <audio id="shiAudio" src="shi.mp3"></audio>
+    <audio id="galatAudio" src="galat.mp3"></audio>
+
+    <div id="game-card" class="game-card text-center text-white p-8 rounded-2xl shadow-2xl max-w-5xl w-full 
+                bg-pink-900/40 backdrop-blur-md border border-pink-300/50">
+
+        <div id="clue-display" class="mb-8 p-6 bg-pink-900/70 rounded-lg shadow-xl">
+            <h2 class="text-3xl font-bold text-pink-200 mb-4">The Personalized Quiz!</h2>
+            <p id="clue-text" class="text-xl text-pink-100 font-semibold">
+            </p>
+        </div>
+
+        <div id="emoji-grid">
+        </div>
+
+        <div id="final-surprise"
+            class="hidden relative z-30 mt-12 p-10 bg-pink-700 rounded-xl shadow-2xl animate-pulse">
+            <h2 class="text-5xl text-yellow-300 mb-4 font-bold">You Know Me Best! 🥳</h2>
+            <p class="text-2xl text-white mb-6">
+                You’ve passed the ultimate Kartik test! I love you!
+            </p>
+            <a href="final_gift.html" class="inline-block px-8 py-4 bg-yellow-400 text-pink-900 font-extrabold rounded-full 
+                       text-xl hover:bg-yellow-300 transition duration-300 shadow-lg">
+                Click Here for Your Ultimate Birthday Gift! 🎁
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // --- Game Configuration ---
+        const QUIZ = [
+            {
+                clueText: "Clue 1: What you will do when you are on stairs with Kartik alone?",
+                answerEmoji: '👩‍❤️‍💋‍👨'
+            },
+            {
+                clueText: "Clue 2: What you do most of the time with Kartik?",
+                answerEmoji: '🍟'
+            },
+            {
+                clueText: "Clue 3: According to you what Kartik think you are?",
+                answerEmoji: '👸'
+            }
+        ];
+
+        // Your updated list of emojis for confusion
+        const CONFUSION_EMOJIS = [' 🌮', '🌯', '🍔', '👑', '🫅', '🤴', '❤️', '😂', '🥳', '💋', '😘', '🐱', '🍕', '🍻', '🎈', '✈️', '📚', '💃', '🕺', '🌞', '🌙', '💦', '🏡', '🎮', '🎤', '🎬', '🎁', '💡', '🥂', '👠', '💰', '🥦', '🍦', '🐧', '🐻', '🔥', '🌟', '🍩'];
+
+        const EMOJI_COUNT = 30; // Total number of buttons on screen (adjust as needed)
+
+        let currentQuizIndex = 0;
+
+        const clueTextElement = document.getElementById('clue-text');
+        const emojiGrid = document.getElementById('emoji-grid');
+        const finalSurprise = document.getElementById('final-surprise');
+        const shiAudio = document.getElementById('shiAudio');
+        const galatAudio = document.getElementById('galatAudio');
+
+        // --- Audio Playback Functions ---
+        function playShi() {
+            shiAudio.currentTime = 0;
+            shiAudio.play().catch(e => console.log("shi.mp3 play failed:", e));
+        }
+
+        function playGalat() {
+            galatAudio.currentTime = 0;
+            galatAudio.play().catch(e => console.log("galat.mp3 play failed:", e));
+        }
+
+        // --- Core Game Logic ---
+
+        function generateEmojis() {
+            emojiGrid.innerHTML = ''; // Clear previous emojis
+
+            if (currentQuizIndex >= QUIZ.length) {
+                // End of quiz reached
+                clueTextElement.textContent = "All answers correct! Accessing final surprise...";
+                finalSurprise.classList.remove('hidden');
+                emojiGrid.style.display = 'none'; // Hide the grid container
+                return;
+            }
+
+            const currentAnswer = QUIZ[currentQuizIndex].answerEmoji;
+            const emojisToUse = [...new Set(CONFUSION_EMOJIS)]; // Start with unique confusion emojis
+
+            // Ensure the correct answer is in the set (redundant check since it's in the list, but safe)
+            if (!emojisToUse.includes(currentAnswer)) {
+                emojisToUse.push(currentAnswer);
+            }
+
+            // Fill the grid with a mix of confusing emojis, guaranteeing the answer is there.
+            let gridEmojis = [];
+            for (let i = 0; i < EMOJI_COUNT; i++) {
+                // Randomly select emojis, ensuring a good mix.
+                const emoji = emojisToUse[Math.floor(Math.random() * emojisToUse.length)];
+                gridEmojis.push(emoji);
+            }
+
+            // Randomly replace one emoji with the correct answer to ensure only one correct button exists
+            const answerIndex = Math.floor(Math.random() * EMOJI_COUNT);
+            gridEmojis[answerIndex] = currentAnswer;
+
+
+            // Render the buttons
+            gridEmojis.forEach((emoji, index) => {
+                const button = document.createElement('button');
+                button.classList.add('emoji-button');
+                button.innerHTML = emoji;
+
+                // Randomize position slightly for visual confusion (within the grid flow)
+                button.style.fontSize = `${2 + Math.random()}rem`;
+
+                // Add the click handler, passing the emoji itself
+                button.onclick = (e) => handleEmojiClick(e, emoji);
+
+                emojiGrid.appendChild(button);
+            });
+
+            // Update the clue text
+            clueTextElement.textContent = QUIZ[currentQuizIndex].clueText;
+        }
+
+        function handleEmojiClick(e, clickedEmoji) {
+            e.stopPropagation(); // Prevents clicks from doing anything else
+
+            const currentAnswer = QUIZ[currentQuizIndex].answerEmoji;
+
+            if (clickedEmoji.trim() === currentAnswer.trim()) { // .trim() handles leading/trailing spaces
+                playShi();
+                currentQuizIndex++;
+                generateEmojis(); // Load the next quiz or the final page
+            } else {
+                playGalat();
+                // Provide visual feedback for the wrong answer
+                e.target.style.transform = 'rotate(10deg) scale(1.1)';
+                setTimeout(() => {
+                    e.target.style.transform = 'none';
+                }, 300);
+            }
+        }
+
+        // Initial setup
+        document.addEventListener('DOMContentLoaded', generateEmojis);
+
+    </script>
+
+</body>
+
+</html>
